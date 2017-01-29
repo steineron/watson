@@ -16,7 +16,7 @@ class Question(models.Model):
         ('MC', 'Multiple Choice'),
         ('OP', 'Open-ended')
     )
-    type = models.CharField(max_length=2, default='OP')
+    _type = models.CharField(max_length=2, choices=QUESTION_TYPES, default='OP')
     by_user = models.ForeignKey(User)
     about_location = models.ForeignKey(Location)
     body = models.CharField(max_length=1024)
@@ -24,6 +24,7 @@ class Question(models.Model):
 
     class Meta:
         app_label = "watson"
+        abstract = True
 
     def __str__(self):
         return self.body
@@ -35,3 +36,15 @@ class Question(models.Model):
     was_posted_recently.admin_order_field = 'posted_date'
     was_posted_recently.boolean = True
     was_posted_recently.short_description = 'Posted recently?'
+
+
+class YesNoQuestion(Question):
+    def __init__(self, *args, **kwargs):
+        super(YesNoQuestion, self).__init__(*args, **kwargs)
+        self._type = 'YN'
+
+
+class OpenEndedQuestion(Question):
+    def __init__(self, *args, **kwargs):
+        super(OpenEndedQuestion, self).__init__(*args, **kwargs)
+        self._type = 'OP'
