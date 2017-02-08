@@ -8,6 +8,7 @@ class User(models.Model):
     """
 
     user_name = models.CharField(max_length=100)
+    auth_token = models.CharField(max_length=100)
 
     class Meta:
         app_label = "watson"

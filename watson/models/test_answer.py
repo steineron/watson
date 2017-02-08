@@ -5,7 +5,6 @@ from watson.models import User
 from watson.models import Question
 
 from watson.models import Location
-from watson.models.questions import YesNoQuestion
 
 
 class TestAnswer(TestCase):
@@ -13,7 +12,7 @@ class TestAnswer(TestCase):
         self.asking = User.objects.create(user_name='asking')
         self.answerer = User.objects.create(user_name='answering')
         self.location = Location.objects.create(name='somewhere', latitude=123.4, longitude=567.8)
-        self.question = YesNoQuestion.objects.create(
+        self.question = Question.objects.create(
                                                 body='watson somewhere?',
                                                 about_location=self.location,
                                                 by_user=self.asking)
