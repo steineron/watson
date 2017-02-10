@@ -7,17 +7,25 @@ from watson.models import User
 from watson.models.locations import Location
 
 
+QUESTION_TYPES = (
+        ('YN', 'Yes No'),
+        ('MC', 'Multiple Choice'),
+        ('OP', 'Open ended')
+    )
+
+
 class Question(models.Model):
     """
     A question that was asked. who asked, when and what answers did it get
     """
-    QUESTION_TYPES = (
-        ('YN', 'Yes/ No'),
-        ('MC', 'Multiple Choice'),
-        ('OP', 'Open-ended')
-    )
+
+# I had to comment the assertion in
+# /Users/steinerro/.virtualenvs/django_for_watson/lib/python3.5/site-packages/graphene/types/typemap.py
+# lines 71-3
+# to make the choices work
+
+    _question_type = models.CharField(max_length=2, choices=QUESTION_TYPES, default='OP')
     uid = models.CharField(max_length=512, unique=True, primary_key=True)
-    _type = models.CharField(max_length=2, choices=QUESTION_TYPES, default='OP')
     by_user = models.ForeignKey(User)
     about_location = models.ForeignKey(Location)
     body = models.CharField(max_length=1024)
@@ -41,10 +49,10 @@ class Question(models.Model):
 # class YesNoQuestion(Question):
 #     def __init__(self, *args, **kwargs):
 #         super(YesNoQuestion, self).__init__(*args, **kwargs)
-#         self._type = 'YN'
+#         self._question_type = 'YN'
 #
 #
 # class OpenEndedQuestion(Question):
 #     def __init__(self, *args, **kwargs):
 #         super(OpenEndedQuestion, self).__init__(*args, **kwargs)
-#         self._type = 'OP'
+#         self._question_type = 'OP'

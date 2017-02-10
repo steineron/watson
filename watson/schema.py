@@ -23,19 +23,20 @@ class LocationNode(DjangoObjectType):
     class Meta:
         model = Location
         interfaces = (Node,)
-        filter_fields = {'name': ['exact', 'icontains', 'istartswith'],
-                         'description': ['exact', 'icontains', 'istartswith']
-                         }
+        filter_fields = {
+            'name': ['exact', 'icontains', 'istartswith'],
+            'description': ['exact', 'icontains', 'istartswith']
+        }
 
 
 class QuestionNode(DjangoObjectType):
     class Meta:
         model = Question
         interfaces = (Node,)
-        filter_fields = {'_type': ['exact'],
-                         'about_location__name': ['exact', 'icontains', 'istartswith'],
-                         'posted_date': ['exact']
-                         }
+        filter_fields = {
+            'about_location__name': ['exact', 'icontains', 'istartswith'],
+            'posted_date': ['exact']
+        }
 
 
 class LocationQuestionNode(DjangoObjectType):
@@ -94,7 +95,7 @@ class NewQuestion(ClientIDMutation):
 
     @classmethod
     def mutate_and_get_payload(cls, args, context, info):
-        question = Question(_type=args.get('type'),
+        question = Question(_question_type=args.get('type'),
                             by_user=User.objects.get(auth_token=args.get('user_auth')),
                             about_location=Location.objects.get(pk=args.get('about_location_id')),
                             body=args.get('body'))
@@ -136,7 +137,7 @@ class Query(graphene.ObjectType):
     all_answers = DjangoFilterConnectionField(AnswerNode)
 
 
-class Mutation(object):
+class Mutation(graphene.ObjectType):
     pass
 
 
