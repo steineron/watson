@@ -16,7 +16,7 @@ class UserNode(DjangoObjectType):
     class Meta:
         model = User
         interfaces = (Node,)
-        filter_fields = {'name': ['exact']}
+        filter_fields = {'user_name': ['exact']}
 
 
 class LocationNode(DjangoObjectType):
@@ -58,6 +58,30 @@ class AnswerNode(DjangoObjectType):
         filter_fields = {
             'to_question__uid': ['exact']
         }
+
+
+class NewUser(ClientIDMutation):
+    """
+    mutation {
+      newUser(input: {userName: "Ron", authToken: "askdmlakjdalk"}) {
+        user {
+          userName
+          authToken
+        }
+      }
+    }
+    """
+    user = Field(UserNode)
+
+    class Input:
+        user_name = graphene.String()
+        auth_token = graphene.String()
+
+    @classmethod
+    def mutate_and_get_payload(cls, input, context, info):
+        user = User(user_name=input.get('user_name'), auth_token=input.get('auth_token'))
+        user.save()
+        return NewUser(user=user)
 
 
 class NewLocation(ClientIDMutation):
@@ -138,7 +162,8 @@ class Query(graphene.ObjectType):
 
 
 class Mutation(graphene.ObjectType):
-    pass
+    # new_question = NewQuestion.Fields()
+    new_user = NewUser.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
